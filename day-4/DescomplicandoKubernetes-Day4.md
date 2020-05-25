@@ -3,10 +3,10 @@
 
 ## Empty-Dir
 
-Um volume do tipo EmptyDir é criado sempre que um Pod é atribuído a um Nó existente , esse volume é criado inicialmente vazio, e todos os containers do Pod podem ler e gravar arquivos no volume. 
-Esse volume não é um volume com persistência de dados, sempre que o Pod é removido de um nó, os dados no EmptyDir são excluídos permanentemente, é importante ressaltar que os dados não são excluídos em casos de falhas nos containers.
+Um volume do tipo *EmptyDir* é criado sempre que um *Pod* é atribuído a um Nó existente, esse volume é criado inicialmente vazio, e todos os containers do *Pod* podem ler e gravar arquivos no volume. 
+Este no persiste os dados, ou seja, sempre que o *Pod* é removido de um nó, os dados no *EmptyDir* são excluídos permanentemente. É importante ressaltar que os dados não são excluídos caso ocorra alguma falha nos containers.
 
-Vamos criar um Pod para testar esse volume.
+Vamos criar um *Pod* para testar esse tipo de volume.
 
 
 ```
@@ -39,7 +39,7 @@ busybox                   1/1       Running   0          12s
 ```
 
 
-Pronto já subimos nosso Pod agora vamos adicionar um arquivo dentro do path /giropops diretamente no Pod criado:
+Pronto já subimos nosso *Pod* agora vamos adicionar um arquivo dentro do path /giropops diretamente no *Pod* criado:
 
 
 ```
@@ -57,7 +57,7 @@ total 0
 ```
 
 
-Como podemos observar nosso arquivo foi criado corretamente, vamos verificar se esse arquivo também foi criado no volume gerenciado pelo kubelet, para isso precisamos descobrir em qual Nó está alocado o Pod.
+Como podemos observar nosso arquivo foi criado corretamente, vamos verificar se esse arquivo também foi criado no volume gerenciado pelo ``kubelet``, para isso precisamos descobrir em qual Nó está alocado o *Pod*.
 
 
 ```
@@ -67,7 +67,7 @@ busybox  1/1       Running   0          1m   10.40.0.6   elliot-02
 ```
 
 
-Agora vamos procurar no Nó elliot-02 nosso volume:
+Agora vamos procurar no Nó ''elliot-02'' nosso volume (no seu ambiente este nome de *Pod* pode ser diferente):
 
 
 ```
@@ -76,7 +76,7 @@ Agora vamos procurar no Nó elliot-02 nosso volume:
 ```
 
 
-Vamos listar esse Path:
+Vamos listar esse *Path*:
 
 
 ```
@@ -87,7 +87,7 @@ funciona
 
 O arquivo que criamos dentro do container está listado.
 
-Vamos remover o Pod e listar novamente o diretório.
+Vamos remover o *Pod* e listar novamente o diretório.
 
 
 ```
@@ -99,20 +99,20 @@ No such file or directory
 ```
 
 
-Opa, recebemos a mensagem de que o diretório não pode ser encontrado, exatamente o que esperamos correto? Porque o volume do tipo EmptyDir não manter os dados persistentes. 
+Opa, recebemos a mensagem de que o diretório não pode ser encontrado, exatamente o que esperamos correto? Porque um volume do tipo *EmptyDir* no deve manter os dados após a remoção do *Pod*. 
 
 
 ## Persistent Volume
 
-O subsistema PersistentVolume fornece uma API para usuários e administradores que resume detalhes de como o armazenamento é fornecido e consumido pelos Pods, para o melhor controle desse sistema foi introduzido dois recursos de API: PersistentVolume e PersistentVolumeClaim.
+O subsistema *PersistentVolume* fornece uma API para usuários e administradores que resume detalhes de como o armazenamento é fornecido e consumido pelos *Pods*, para o melhor controle desse sistema foram introduzidos dois recursos de API: *PersistentVolume* e *PersistentVolumeClaim*.
 
-Um PersistentVolume (PV) é um recurso no cluster, assim como um Nó. Mas nesse caso é um recurso de armazenamento, O PV é uma parte do armazenamento no cluster que foi provisionado por um administrador, Os PVs tem um ciclo de vida independente de qualquer Pod associado a ele. Essa API permite armazenamentos do tipo NFS, ISCSI ou armazenamento de um provedor de nuvem específico. 
+Um *PersistentVolume* (PV) é um recurso no *cluster*, assim como um Nó. Mas nesse caso é um recurso de armazenamento, O PV é uma parte do armazenamento no *cluster* que foi provisionado por um administrador, Os PVs tem um ciclo de vida independente de qualquer *Pod* associado a ele. É possível armazenamentos do tipo NFS, ISCSI ou de um provedor de nuvem específico. 
 
-Um PersistentVolumeClaim (PVC) é semelhante a um Pod, Os Pods consomem recursos de um Nó e os PVCs consomem recursos dos PVs, mas o que é um PVC ? Nada mais é do que uma solicitação de armazenamento criada por um usuário.
+Um *PersistentVolumeClaim* (PVC) é semelhante a um *Pod*. Enquanto os *Pods* consomem recursos de um Nó e os PVCs consomem recursos dos PVs, mas o que é um PVC? Nada mais é do que uma solicitação de armazenamento criada por um usuário.
 
-Vamos criar um PersistentVolume do tipo NFS, para isso vamos instalar os pacotes necessários para criar um NFS Server no Linux:
+Vamos criar um *PersistentVolume* do tipo NFS e para isso precisamos instalar os pacotes necessários para suportar um NFS Server no Linux:
 
-Vamos instalar os pacotes no node elliot-01.
+Vamos instalar os pacotes no node ``elliot-01``.
 
 Família Debian:
 
@@ -130,7 +130,7 @@ Família RedHat:
 ```
 
 
-Agora vamos instalar o pacote nfs-common nos demais nodes da família Debian.
+Agora vamos instalar o pacote ``nfs-common`` nos demais nodes da família Debian.
 
 
 ```
@@ -166,7 +166,7 @@ Vamos criar um arquivo nesse diretório para nosso teste.
 ```
 
 
-Agora vamos criar o manifesto yaml do nosso PersistentVolume, lembre se de alterar o IP address do campo server para o ip address do node elliot-01.
+Agora vamos criar o manifesto yaml do nosso *PersistentVolume*. Lembre-se de alterar o ``IP address`` do campo server para o ip address do node ``elliot-01``.
 
 
 ```
@@ -189,7 +189,7 @@ spec:
 ```
 
 
-Agora vamos criar nosso PersistentVolume.
+Agora vamos criar nosso *PersistentVolume*.
 
 
 ```
@@ -222,7 +222,7 @@ Events:        <none>
 ```
 
 
-Agora precisamos criar nosso PersitentVolumeClaim, assim os Pods conseguem solicitar leitura e escrita ao nosso PersistentVolume.
+Agora precisamos criar nosso *PersitentVolumeClaim*, assim os *Pods* conseguirão solicitar leitura e escrita ao nosso *PersistentVolume*.
 
 
 ```
@@ -243,7 +243,7 @@ persistentvolumeclaim/primeiro-pvc created
 ```
 
 
-Vamos listar nosso PersistentVolume e o PersistentVolumeClaim.
+Vamos listar nosso *PersistentVolume* e o *PersistentVolumeClaim*.
 
 
 ```
@@ -257,8 +257,9 @@ primeiro-pvc  Bound    primeiro-pv  1Gi        RWX          ...  3m
 ```
 
 
-Agora que já temos um PersistentVolume e um PersistentVolumeClaim vamos criar um deployment que irá consumir esse volume:
+Agora que já temos um *PersistentVolume* e um *PersistentVolumeClaim* vamos criar um *deployment* que irá consumir esse volume. 
 
+Crie o arquivo ``nfs-pv.yaml`` com o conteúdo a seguir:
 
 ```
 # vim nfs-pv.yaml
@@ -305,7 +306,13 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+```
 
+
+Crie o volume e verifique a configuração do *deployment*:
+
+
+```
 # kubectl create -f nfs-pv.yaml
 deployment.apps/nginx created
 
@@ -349,9 +356,9 @@ Events:
 ```
 
 
-Como podemos observar detalhando nosso Pod ele foi criado com o Volume NFS utilizando o ClaimName primeiro-pvc.
+No detalhamento do *Pod* podemos observar que ele foi criado com o Volume NFS utilizando o *ClaimName* **primeiro-pvc**.
 
-Vamos detalhar nosso Pod para verificar se está tudo certinho.
+Vamos detalhar nosso *Pod* para verificar se está tudo certinho.
 
 
 ```
@@ -388,9 +395,9 @@ Volumes:
 ```
 
 
-Tudo certo não, o Pod realmente montou o volume /giropops utilizando o volume nfs.
+Tudo certo não, o *Pod* realmente montou o volume /giropops utilizando o volume nfs.
 
-Agora vamos listar os arquivos dentro do path no container utilizando nosso exemplo que no caso está localizado no Nó elliot-02:
+Agora vamos listar os arquivos dentro do *path* no *container* utilizando nosso exemplo que no caso está localizado no Nó ``elliot-02``:
 
 
 ```
@@ -401,7 +408,7 @@ FUNCIONA
 
 Podemos ver o arquivos que lá no começo está listado no diretório.
 
-Agora vamos criar outro arquivo utilizando o próprio container com o comando exec e o parâmetro -- touch.
+Agora vamos criar outro arquivo utilizando o próprio container com o comando exec e o parâmetro ``-- touch``.
 
 
 ```
@@ -416,7 +423,7 @@ drwxr-xr-x. 1 root root   44 Jul  7 22:53 ..
 ```
 
 
-Listando dentro do container podemos observar que o arquivo foi criado, mas e dentro do nosso NFS Server ? , vamos listar o diretório do NSF Server no elliot-01.
+Listando dentro do container podemos observar que o arquivo foi criado, mas e dentro do nosso NFS Server? Vamos listar o diretório do NSF Server no ``elliot-01``.
 
 
 ```
@@ -449,14 +456,14 @@ Agora vamos listar o diretório no NFS Server.
 ```
 
 
-Como era de se esperar os arquivos continuam lá e não foram deletados com a exclusão do Deployment, essa é uma das várias formas de se manter arquivos persistentes para os Pods consumirem.
+Como era de se esperar os arquivos continuam lá e não foram deletados com a exclusão do Deployment, essa é uma das várias formas de se manter arquivos persistentes para os *Pods* consumirem.
 
 
 # Cron Jobs
 
-Um Serviço CronJob nada mais é do que uma linha de um arquivo crontab o mesmo arquivo de uma tabela cron. Ele agenda e executa tarefas periodicamente em um determinado cronograma.
+Um Serviço ``Cron Job`` nada mais é do que uma linha de um arquivo crontab o mesmo arquivo de uma tabela *cron*. Ele agenda e executa tarefas periodicamente em um determinado cronograma.
 
-Mas para que podemos usar os Cron Jobs? As Cron são úteis para criar tarefas periódicas e recorrentes, como executar backups ou enviar e-mails.
+Mas para que podemos usar os Cron Jobs? Elas são úteis para criar tarefas periódicas e recorrentes, como executar backups ou enviar e-mails.
 
 Vamos criar um exemplo para ver como funciona, bora criar nosso manifesto:
 
@@ -542,9 +549,9 @@ Events:
 ```
 
 
-Olha que bacana, se observar no Events o Cron já está agendando e executando as tarefas.
+Olha que bacana, se observar no *Events* o Cron já está agendando e executando as tarefas.
 
-Agora vamos ver esse Cron funcionando através do comando get junto do parâmetro --watch para verificar a saida das tarefas, preste atenção que a tarefa vai ser criada em cerca de um minuto após a criação do CronJob.
+Agora vamos ver esse Cron funcionando através do comando get junto do parâmetro ``--watch`` para verificar a saida das tarefas, preste atenção que a tarefa vai ser criada em cerca de um minuto após a criação do CronJob.
 
 
 ```
@@ -559,9 +566,9 @@ giropops-cron  */1 * * * *   False     1         26s             48m
 ```
 
 
-Como podemos observar nosso Cron está funcionando corretamente, para visualizar a saída dos comandos executados pela tarefa vamos utilizar o comando logs do kubectl. 
+Como podemos observar nosso Cron está funcionando corretamente, para visualizar a saída dos comandos executados pela tarefa vamos utilizar o comando logs do ``kubectl``. 
 
-Para isso vamos listar os pods em execução e em seguida pegar os logs do mesmo.
+Para isso vamos listar os *Pods* em execução e em seguida pegar seus logs.
 
 
 ```
@@ -575,9 +582,9 @@ LinuxTips VAIIII
 ```
 
 
-O Cron está executando corretamente as tarefas de  imprimir a data e a frase que criamos no manifesto.
+O Cron está executando corretamente as tarefas de imprimir a data e a frase que criamos no manifesto.
 
-Se executarmos um get pods poderemos ver os Pods criados e utilizados para executar as tarefas a todo minuto.
+Se executarmos um ``get pods`` poderemos ver os *Pods* criados e utilizados para executar as tarefas a todo minuto.
 
 
 ```
@@ -589,7 +596,7 @@ giropops-cron-1534980480-4bwcc   1/1      Running     0          4s
 ```
 
 
-Por padrão o Kubernetes mantém o histórico dos últimos 3 Cron executados , concluídos ou com falhas.
+Por padrão o Kubernetes mantém o histórico dos últimos 3 Cron executados, concluídos ou com falhas.
 
 Agora vamos deletar nosso CronJob 
 
